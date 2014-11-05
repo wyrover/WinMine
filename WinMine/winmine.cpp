@@ -32,6 +32,7 @@
 #define WIDTH 20
 #define HEIGHT 20
 
+
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
@@ -129,11 +130,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// x,y为贴图所在的坐标，cx,xy为图片的宽和高，hdcMem为图片所在位置， 后面坐标为图片的坐标，
 		x = LOWORD(lParam);
 		y = HIWORD(lParam);
+		if(x > (cxClient / 2 - (cxSource*WIDTH) / 2))
+		x = ((x - (cxClient / 2 - (cxSource*WIDTH) / 2)) / cxSource)*cxSource + (cxClient / 2 - (cxSource*WIDTH) / 2);
+		if ((cyClient / 2 - (cxSource*HEIGHT) / 2))
+		y = ((y - (cyClient / 2 - (cxSource*HEIGHT) / 2)) / cxSource)*cxSource + (cyClient / 2 - (cxSource*HEIGHT) / 2);
 		if (x > (cxClient / 2 - (cxSource*WIDTH) / 2) && x < (cxClient + cxSource*HEIGHT) / 2 &&
-			y >(cyClient / 2 - (cxSource*HEIGHT) / 2) && y < (cyClient + cxSource*HEIGHT) / 2)
+			y > (cyClient / 2 - (cxSource*HEIGHT) / 2) && y < (cyClient + cxSource*HEIGHT) / 2)
 		{
-			x = (x / cxSource)*cxSource;
-			y = (y / cxSource)*cxSource;
 			BitBlt(hdc, x, y, cxSource, cySource / 16, hdcMem, 0, cySource * 15 / 16, SRCCOPY);
 		}
 		//说和释放内存
