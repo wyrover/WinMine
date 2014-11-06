@@ -81,7 +81,9 @@
     <ClCompile Include="winmine.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="functions.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="winmine.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="WinMine.rc" />

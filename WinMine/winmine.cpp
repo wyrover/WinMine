@@ -28,9 +28,10 @@
 
 #include <windows.h>
 #include "resource.h"
+#include "winmine.h"
+#include "functions.h"
 
-#define WIDTH 20
-#define HEIGHT 20
+
 
 
 LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
@@ -61,7 +62,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		return 0;
 	}
 
-	hwnd = CreateWindow(szAppName, TEXT("WinMine"),
+	hwnd = CreateWindow(szAppName, TEXT("扫雷"),
 		WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT,
 		CW_USEDEFAULT, CW_USEDEFAULT,
@@ -81,6 +82,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static HBITMAP hBitmap;
+	static int mineRowNum, mineColNum;
 	static int     cxClient, cyClient, cxSource, cySource;
 	BITMAP         bitmap;
 	HDC            hdc, hdcMem;
@@ -105,14 +107,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	case WM_PAINT:
 		hdc = BeginPaint(hwnd, &ps);
-		x = cxClient/2  - (cxSource*WIDTH) / 2;
-		y = cyClient/2  - (cxSource*HEIGHT) / 2;
+		mineRowNum = DEFAULT_ROW_NUM;
+		mineColNum = DEFAULT_COL_NUM;
+		x = cxClient/2  - (cxSource*mineRowNum) / 2;
+		y = cyClient/2  - (cxSource*mineColNum) / 2;
 		hdcMem = CreateCompatibleDC(hdc); //内存区域的句柄
 		SelectObject(hdcMem, hBitmap);
-		// x,y为贴图所在的坐标，cx,xy为图片的宽和高，hdcMem为图片所在位置， 后面坐标为图片的坐标，
-		for (int xi = x; xi < (cxClient + cxSource*HEIGHT) / 2; xi += cxSource)
+		//贴砖
+		for (int xi = x; xi < (cxClient + cxSource*mineRowNum) / 2; xi += cxSource)
 		{
-			for (int yi = y; yi <(cyClient + cxSource*HEIGHT) / 2; yi += cxSource)
+			for (int yi = y; yi <(cyClient + cxSource*mineColNum) / 2; yi += cxSource)
 			{
 				BitBlt(hdc, xi, yi, cxSource, cySource / 16, hdcMem, 0, 0, SRCCOPY);
 			}
@@ -130,12 +134,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// x,y为贴图所在的坐标，cx,xy为图片的宽和高，hdcMem为图片所在位置， 后面坐标为图片的坐标，
 		x = LOWORD(lParam);
 		y = HIWORD(lParam);
-		if(x > (cxClient / 2 - (cxSource*WIDTH) / 2))
-		x = ((x - (cxClient / 2 - (cxSource*WIDTH) / 2)) / cxSource)*cxSource + (cxClient / 2 - (cxSource*WIDTH) / 2);
-		if ((cyClient / 2 - (cxSource*HEIGHT) / 2))
-		y = ((y - (cyClient / 2 - (cxSource*HEIGHT) / 2)) / cxSource)*cxSource + (cyClient / 2 - (cxSource*HEIGHT) / 2);
-		if (x > (cxClient / 2 - (cxSource*WIDTH) / 2) && x < (cxClient + cxSource*HEIGHT) / 2 &&
-			y > (cyClient / 2 - (cxSource*HEIGHT) / 2) && y < (cyClient + cxSource*HEIGHT) / 2)
+		if (x >= (cxClient / 2 - (cxSource*mineRowNum) / 2))
+		x = ((x - (cxClient / 2 - (cxSource*mineRowNum) / 2)) / cxSource)*cxSource + (cxClient / 2 - (cxSource*mineRowNum) / 2);
+		if (y >= (cyClient / 2 - (cxSource*mineColNum) / 2))
+		y = ((y - (cyClient / 2 - (cxSource*mineColNum) / 2)) / cxSource)*cxSource + (cyClient / 2 - (cxSource*mineColNum) / 2);
+		if (x >= (cxClient / 2 - (cxSource*mineRowNum) / 2) && x < (cxClient + cxSource*mineColNum) / 2 &&
+			y >= (cyClient / 2 - (cxSource*mineColNum) / 2) && y < (cyClient + cxSource*mineColNum) / 2)
 		{
 			BitBlt(hdc, x, y, cxSource, cySource / 16, hdcMem, 0, cySource * 15 / 16, SRCCOPY);
 		}
