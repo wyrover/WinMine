@@ -95,8 +95,6 @@
     <Image Include="..\res\421.bmp" />
     <Image Include="..\res\430.bmp" />
     <Image Include="..\res\431.bmp" />
-    <Image Include="bitmap1.bmp" />
-    <Image Include="bitmap2.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

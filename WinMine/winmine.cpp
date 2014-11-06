@@ -82,8 +82,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static HBITMAP hBitmap;
-	static int mineRowNum, mineColNum;
+	static int mineRowNum, mineColNum,mineNum;
 	static int     cxClient, cyClient, cxSource, cySource;
+	static int mi,mj;
+	bool layMineFlag = false;
 	BITMAP         bitmap;
 	HDC            hdc, hdcMem;
 	HINSTANCE      hInstance;
@@ -98,6 +100,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		GetObject(hBitmap, sizeof (BITMAP), &bitmap);
 		cxSource = bitmap.bmWidth;
 		cySource = bitmap.bmHeight;
+		
 		return 0;
 
 	case WM_SIZE:
@@ -109,6 +112,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		hdc = BeginPaint(hwnd, &ps);
 		mineRowNum = DEFAULT_ROW_NUM;
 		mineColNum = DEFAULT_COL_NUM;
+		mineNum = DEFAULT_MINE_NUM;
+		//找到第一个点使雷区在窗口中央
 		x = cxClient/2  - (cxSource*mineRowNum) / 2;
 		y = cyClient/2  - (cxSource*mineColNum) / 2;
 		hdcMem = CreateCompatibleDC(hdc); //内存区域的句柄
@@ -125,25 +130,48 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		//释放内存
 		DeleteDC(hdcMem);
 		EndPaint(hwnd, &ps);
+		layMine(mineRowNum, mineColNum, mineNum);
 		return 0;
 
 	case WM_LBUTTONDOWN:
+		
 		hdc = GetDC(hwnd);
 		hdcMem = CreateCompatibleDC (hdc) ; //内存区域的句柄
 		SelectObject (hdcMem, hBitmap) ;
-		// x,y为贴图所在的坐标，cx,xy为图片的宽和高，hdcMem为图片所在位置， 后面坐标为图片的坐标，
+		// x,y为贴图所在的坐标，cx,xy为图片的宽和高， 后面坐标为图片的坐标，
 		x = LOWORD(lParam);
 		y = HIWORD(lParam);
-		if (x >= (cxClient / 2 - (cxSource*mineRowNum) / 2))
-		x = ((x - (cxClient / 2 - (cxSource*mineRowNum) / 2)) / cxSource)*cxSource + (cxClient / 2 - (cxSource*mineRowNum) / 2);
-		if (y >= (cyClient / 2 - (cxSource*mineColNum) / 2))
-		y = ((y - (cyClient / 2 - (cxSource*mineColNum) / 2)) / cxSource)*cxSource + (cyClient / 2 - (cxSource*mineColNum) / 2);
-		if (x >= (cxClient / 2 - (cxSource*mineRowNum) / 2) && x < (cxClient + cxSource*mineColNum) / 2 &&
-			y >= (cyClient / 2 - (cxSource*mineColNum) / 2) && y < (cyClient + cxSource*mineColNum) / 2)
-		{
-			BitBlt(hdc, x, y, cxSource, cySource / 16, hdcMem, 0, cySource * 15 / 16, SRCCOPY);
-		}
-		//说和释放内存
+		//鼠标按下是贴图
+		mi = ((x - (cxClient / 2 - (cxSource*mineRowNum) / 2)) / cxSource) - 1;
+		mj = ((y - (cyClient / 2 - (cxSource*mineColNum) / 2)) / cxSource) - 1;
+			if (map[mi][mj] == BOMB)
+			{
+				
+				/*mx = (x - (cxClient / 2 - (cxSource*mineRowNum) / 2)) + cxSource*(i + 1);
+				my = (y - (cyClient / 2 - (cxSource*mineColNum) / 2)) + cxSource*(j + 1);*/
+				if (x >= (cxClient / 2 - (cxSource*mineRowNum) / 2))
+					x = ((x - (cxClient / 2 - (cxSource*mineRowNum) / 2)) / cxSource)*cxSource + (cxClient / 2 - (cxSource*mineRowNum) / 2);
+				if (y >= (cyClient / 2 - (cxSource*mineColNum) / 2))
+					y = ((y - (cyClient / 2 - (cxSource*mineColNum) / 2)) / cxSource)*cxSource + (cyClient / 2 - (cxSource*mineColNum) / 2);
+				if (x >= (cxClient / 2 - (cxSource*mineRowNum) / 2) && x < (cxClient + cxSource*mineColNum) / 2 &&
+					y >= (cyClient / 2 - (cxSource*mineColNum) / 2) && y < (cyClient + cxSource*mineColNum) / 2)
+				{
+					BitBlt(hdc, x, y, cxSource, cySource / 16, hdcMem, 0, cySource * 3 / 16, SRCCOPY);
+				}
+			}
+			else
+			{
+				if (x >= (cxClient / 2 - (cxSource*mineRowNum) / 2))
+					x = ((x - (cxClient / 2 - (cxSource*mineRowNum) / 2)) / cxSource)*cxSource + (cxClient / 2 - (cxSource*mineRowNum) / 2);
+				if (y >= (cyClient / 2 - (cxSource*mineColNum) / 2))
+					y = ((y - (cyClient / 2 - (cxSource*mineColNum) / 2)) / cxSource)*cxSource + (cyClient / 2 - (cxSource*mineColNum) / 2);
+				if (x >= (cxClient / 2 - (cxSource*mineRowNum) / 2) && x < (cxClient + cxSource*mineColNum) / 2 &&
+					y >= (cyClient / 2 - (cxSource*mineColNum) / 2) && y < (cyClient + cxSource*mineColNum) / 2)
+				{
+					BitBlt(hdc, x, y, cxSource, cySource / 16, hdcMem, 0, cySource * 15 / 16, SRCCOPY);
+				}
+			}
+		//释放内存
 		DeleteDC (hdcMem) ;
 		EndPaint (hwnd, &ps) ;
 		return 0;
