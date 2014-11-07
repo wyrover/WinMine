@@ -14,11 +14,11 @@ void layMine(int mineRowNum,int mineColNum,int mineBombNum)
 	int i,j,count ;
 	for (count = 0; count < mineBombNum; count++)
 	{
-		i = rand() % mineRowNum;
-		j = rand() % mineColNum;
+		i = rand() % (mineRowNum-1) ;
+		j = rand() % (mineColNum-1) ;
 		map[i][j] = BOMB;
 	}
-	for (int i = 0; i < mineRowNum;i++)
+	for (int i = 0; i < mineRowNum; i++)
 	for (int j = 0; j < mineColNum; j++)
 	{
 		if (map[i][j] != BOMB)
@@ -31,10 +31,11 @@ void countAroundMine(int mineRowNum, int mineColNum)
 	for (int i = 0; i < mineRowNum; i++)
 	for (int j = 0; j < mineColNum; j++)
 	{
-			if(map[i][j] == BOMB)
-			for (int r = i - 1; r <= i + 1; r++)
-			for (int c = i - 1; c <= i + 1; c++)
-				counter[r][c]++;
+		if (map[i][j] == BOMB)
+		for (int r = i - 1; r <= i + 1; r++)
+		for (int c = j - 1; c <= j + 1; c++)
+		if (map[r][c] != BOMB && r >=0 && c >= 0 && r < mineRowNum && c < mineColNum)
+			counter[r][c]++;
 	}
 
 }

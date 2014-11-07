@@ -143,8 +143,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		x = LOWORD(lParam);
 		y = HIWORD(lParam);
 		//鼠标按下是贴图
-		mi = ((x - (cxClient / 2 - (cxSource*mineRowNum) / 2)) / cxSource) - 1;
-		mj = ((y - (cyClient / 2 - (cxSource*mineColNum) / 2)) / cxSource) - 1;
+		mi = ((x - (cxClient / 2 - (cxSource*mineRowNum) / 2)) / cxSource) ;
+		mj = ((y - (cyClient / 2 - (cxSource*mineColNum) / 2)) / cxSource) ;
 			if (map[mi][mj] == BOMB)
 			{
 				
@@ -169,6 +169,9 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				if (x >= (cxClient / 2 - (cxSource*mineRowNum) / 2) && x < (cxClient + cxSource*mineColNum) / 2 &&
 					y >= (cyClient / 2 - (cxSource*mineColNum) / 2) && y < (cyClient + cxSource*mineColNum) / 2)
 				{
+					if (map[mi][mj]!=BOMB)
+					BitBlt(hdc, x, y, cxSource, cySource / 16, hdcMem, 0, cySource * (15-counter[mi][mj]) / 16, SRCCOPY);
+					else
 					BitBlt(hdc, x, y, cxSource, cySource / 16, hdcMem, 0, cySource * 15 / 16, SRCCOPY);
 				}
 			}
