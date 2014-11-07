@@ -81,7 +81,7 @@
     <ClCompile Include="winmine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="functions.h" />
+    <ClInclude Include="functions.cpp" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="winmine.h" />
   </ItemGroup>

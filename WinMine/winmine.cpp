@@ -29,7 +29,7 @@
 #include <windows.h>
 #include "resource.h"
 #include "winmine.h"
-#include "functions.h"
+#include "functions.cpp"
 
 
 
@@ -131,6 +131,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		DeleteDC(hdcMem);
 		EndPaint(hwnd, &ps);
 		layMine(mineRowNum, mineColNum, mineNum);
+		countAroundMine(mineRowNum, mineColNum);
 		return 0;
 
 	case WM_LBUTTONDOWN:

@@ -26,7 +26,7 @@
     <ClInclude Include="winmine.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="functions.h">
+    <ClInclude Include="functions.cpp">
       <Filter>源文件</Filter>
     </ClInclude>
   </ItemGroup>

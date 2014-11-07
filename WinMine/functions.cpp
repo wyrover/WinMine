@@ -26,17 +26,15 @@ void layMine(int mineRowNum,int mineColNum,int mineBombNum)
 	}
 }
 
-void markAroundMine(int mineRowNum, int mineColNum)
+void countAroundMine(int mineRowNum, int mineColNum)
 {
 	for (int i = 0; i < mineRowNum; i++)
 	for (int j = 0; j < mineColNum; j++)
 	{
-		for (int r = i - 1; r <= i + 1;r++)
-		for (int c = j - 1; j <= j + 1; j++)
-		{
-			if (map[r][c] == NOBOMB)
-				counter[r][c]++;	
-		}
+			if(map[i][j] == BOMB)
+			for (int r = i - 1; r <= i + 1; r++)
+			for (int c = i - 1; c <= i + 1; c++)
+				counter[r][c]++;
 	}
 
 }
